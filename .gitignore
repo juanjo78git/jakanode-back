@@ -1,0 +1,64 @@
+# Archivos de entornos virtuales
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.so
+
+# Configuración de editor de texto/IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignorar archivos temporales de vi
+.*.swp
+*~
+
+# Otros archivos temporales
+*.bak
+*.tmp
+
+# Archivos de logs y depuración
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+logs/
+
+# Configuración del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de testing
+htmlcov/
+.tox/
+.nox/
+coverage.*
+.cache
+pytest_cache/
+*.cover
+.hypothesis/
+
+# Archivos generados por herramientas de empaquetado
+*.egg
+*.egg-info/
+dist/
+build/
+pip-wheel-metadata/
+
+# Configuración de virtualenvwrapper
+.env
+.python-version
+
+# Configuración de Jupyter
+.ipynb_checkpoints/
+
+# Archivos generados por herramientas de documentación
+docs/_build/
+
+# Archivos de base de datos SQLite
+*.sqlite3
+*.db
+
