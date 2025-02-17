@@ -14,7 +14,7 @@ Note: This is a placeholder authentication function and should be replaced
 with a real authentication mechanism in production (e.g., OAuth2, JWT).
 """
 
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Header, HTTPException, status
 
 
 def fake_auth(authorization: str = Header(None)):

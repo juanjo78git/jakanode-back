@@ -2,6 +2,7 @@
 ignore=venv
 jobs=1
 load-plugins=pylint.extensions.docparams
+good-names=jakanode-back
 
 [MESSAGES CONTROL]
 disable=

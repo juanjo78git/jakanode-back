@@ -24,6 +24,7 @@ router = APIRouter()
     description="Returns a message from the public home endpoint.",
 )
 @limiter.limit("5/minute")
+# pylint: disable=W0613
 async def home(request: Request):
     """
     Public home endpoint.
@@ -39,6 +40,7 @@ async def home(request: Request):
 
 @router.get("/info", summary="Public Info", description="Provides public information.")
 @limiter.limit("5/minute")
+# pylint: disable=W0613
 async def info(request: Request):
     """
     Public information endpoint.

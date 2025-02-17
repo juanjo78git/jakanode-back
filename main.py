@@ -22,7 +22,7 @@ Documentation:
 
 from fastapi import FastAPI
 
-from app.api.routes import health, private, public
+from app.api.routes import routers
 from app.core.config import add_cors
 from app.core.rate_limiting import _rate_limit_exceeded_handler, limiter
 from app.core.security import SecurityHeadersMiddleware
@@ -46,7 +46,13 @@ add_cors(app)
 app.add_exception_handler(429, _rate_limit_exceeded_handler)
 app.state.limiter = limiter  # Associate the limiter with the app
 
-# Include API routes with the /api/v1 prefix and appropriate tags for documentation.
-app.include_router(health.router, prefix="/api/v1", tags=["Health"])
-app.include_router(public.router, prefix="/api/v1", tags=["Public"])
-app.include_router(private.router, prefix="/api/v1", tags=["Private"])
+# Include all routers from the routes package
+for router_entry in routers:
+    app.include_router(
+        router_entry["router"], prefix=router_entry["prefix"], tags=router_entry["tags"]
+    )
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

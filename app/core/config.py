@@ -38,9 +38,6 @@ def add_cors(app):
     Parameters:
         app (FastAPI): The FastAPI application instance.
 
-    Returns:
-        None: The function modifies the app in-place by adding the middleware.
-
     Raises:
         Exception: If the middleware cannot be added due to an internal error.
     """

@@ -13,7 +13,7 @@ Each endpoint uses the fake_auth dependency to simulate authentication.
 Replace fake_auth with a real authentication mechanism in production.
 """
 
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends
 
 from app.api.dependencies.auth import fake_auth
 

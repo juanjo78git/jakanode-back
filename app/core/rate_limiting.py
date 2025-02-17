@@ -11,7 +11,7 @@ Usage:
     - In your main application, associate the limiter with the app's state
       and add the exception handler.
 """
-
+# pylint: disable=W0611
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 
