@@ -25,7 +25,6 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     These headers help protect against various web vulnerabilities.
     """
 
-    # async def process_request(
     async def dispatch(
         self,
         request: Request,
@@ -64,6 +63,26 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         # and includes all subdomains.
         response.headers["Strict-Transport-Security"] = (
             "max-age=31536000; includeSubDomains"
+        )
+
+        # Content-Security-Policy (CSP)
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self';"
+        )
+        response.headers["X-Content-Security-Policy"] = "default-src 'self';"
+
+        # Referrer Policy
+        response.headers["Referrer-Policy"] = "no-referrer"
+
+        # Permissions Policy
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=()"
+
+        # Prevent caching of sensitive data
+        response.headers["Cache-Control"] = "no-store"
+
+        # Expect-CT (optional)
+        response.headers["Expect-CT"] = (
+            "max-age=86400, enforce, report-uri='https://example.com/report'"
         )
 
         return response

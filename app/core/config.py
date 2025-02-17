@@ -23,7 +23,7 @@ from fastapi.middleware.cors import CORSMiddleware
 origins = [
     "https://jakanode.freeddns.org",  # Production API access
     "http://localhost",  # Local development
-    "http://localhost:4200",  # Angular development server
+    "http://localhost:4200",  # Front server
 ]
 
 
