@@ -1,45 +1,52 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.routes import public, private, health
-from starlette.middleware.base import BaseHTTPMiddleware
+"""
+Main application entry point for the Jakanode API.
 
-# Middleware
-class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
-        response = await call_next(request)
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
-        response.headers["X-XSS-Protection"] = "1; mode=block"
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        return response
+This module creates the FastAPI application instance, configures global
+security and CORS settings, and mounts the various API routers (health,
+public, and private endpoints) under the /api/v1 prefix.
+
+Endpoints:
+    - /api/v1/health: Health check endpoint.
+    - /api/v1/ (and subpaths): Public endpoints.
+    - /api/v1/ (and subpaths): Private endpoints (require authentication).
+
+Security:
+    - Adds security headers to each response via SecurityHeadersMiddleware.
+    - Configures Cross-Origin Resource Sharing (CORS) using a helper function.
+
+Documentation:
+    - OpenAPI schema is available at /api/v1/openapi.json.
+    - Swagger UI is available at /api/v1/docs.
+    - ReDoc is available at /api/v1/redoc.
+"""
+
+from fastapi import FastAPI
+
+from app.api.routes import health, private, public
+from app.core.config import add_cors
+from app.core.rate_limiting import _rate_limit_exceeded_handler, limiter
+from app.core.security import SecurityHeadersMiddleware
 
 app = FastAPI(
-        title="Jakanode API",
-        description="API providing public and private endpoints.",
-        version="1.0.0",
-        openapi_url="/api/v1/openapi.json",
-        docs_url="/api/v1/docs", 
-        redoc_url="/api/v1/redoc"
-      )
-# CORS
-origins = [
-    "https://jakanode.freeddns.org",
-    "http://localhost",
-    "http://localhost:4200"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True, 
-    allow_methods=["*"],
-    allow_headers=["*"],
+    title="Jakanode API",
+    description="API providing public and private endpoints.",
+    version="1.0.0",
+    openapi_url="/api/v1/openapi.json",
+    docs_url="/api/v1/docs",
+    redoc_url="/api/v1/redoc",
 )
-# Security Middleware
+
+# Add Security Middleware to include HTTP security headers in every response.
 app.add_middleware(SecurityHeadersMiddleware)
 
-# API Routes
+# Configure Cross-Origin Resource Sharing (CORS) settings.
+add_cors(app)
+
+# Set up the rate limiting exception handler
+app.add_exception_handler(429, _rate_limit_exceeded_handler)
+app.state.limiter = limiter  # Associate the limiter with the app
+
+# Include API routes with the /api/v1 prefix and appropriate tags for documentation.
 app.include_router(health.router, prefix="/api/v1", tags=["Health"])
 app.include_router(public.router, prefix="/api/v1", tags=["Public"])
 app.include_router(private.router, prefix="/api/v1", tags=["Private"])
-

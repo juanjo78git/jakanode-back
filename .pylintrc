@@ -1,0 +1,23 @@
+[MASTER]
+ignore=venv
+jobs=1
+load-plugins=pylint.extensions.docparams
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,   # Allow modules without docstrings
+    missing-class-docstring,    # Allow classes without docstrings
+    missing-function-docstring, # Allow functions without docstrings
+    too-few-public-methods,     # Ignore warnings for classes with few public methods
+    import-error,               # Prevent errors when pylint cannot find modules in venv
+
+[FORMAT]
+max-line-length=120  # Allow lines up to 120 characters
+
+[DESIGN]
+max-args=6  # Allow functions with up to 6 arguments
+max-attributes=10  # Allow classes with up to 10 attributes
+
+[LOGGING]
+logging-format-style=new
+logging-modules=logging
