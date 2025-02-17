@@ -1,8 +1,3 @@
 """
-This package contains API dependencies such as authentication functions.
+This package contains API dependencies
 """
-
-# Si deseas exponer una función de autenticación:
-from .auth import fake_auth
-
-__all__ = ["fake_auth"]

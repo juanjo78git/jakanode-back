@@ -15,7 +15,7 @@ Replace fake_auth with a real authentication mechanism in production.
 
 from fastapi import APIRouter, Depends
 
-from app.api.dependencies.auth import fake_auth
+from app.auth.auth import fake_auth
 
 router = APIRouter()
 
