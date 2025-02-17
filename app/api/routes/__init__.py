@@ -10,10 +10,12 @@ Available routers:
     - health_router: Contains endpoints for health checks.
 """
 
+from typing import Any, Dict, List
+
 from app.api.routes import health, private, public
 
 # List of all routers to be included in the main FastAPI application
-routers = [
+routers: List[Dict[str, Any]] = [
     {"router": health.router, "prefix": "/api/v1", "tags": ["Health"]},
     {"router": public.router, "prefix": "/api/v1", "tags": ["Public"]},
     {"router": private.router, "prefix": "/api/v1", "tags": ["Private"]},

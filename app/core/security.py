@@ -12,6 +12,9 @@ Headers included:
 - Strict-Transport-Security: Enforces HTTPS (HSTS).
 """
 
+from typing import Awaitable, Callable
+
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
@@ -22,7 +25,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     These headers help protect against various web vulnerabilities.
     """
 
-    async def dispatch(self, request, call_next):
+    # async def process_request(
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
         """
         Process the incoming request, add security headers to the response,
         and return the modified response.
