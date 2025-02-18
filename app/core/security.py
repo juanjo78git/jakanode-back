@@ -65,11 +65,19 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "max-age=31536000; includeSubDomains"
         )
 
-        # Content-Security-Policy (CSP)
+        # Content-Security-Policy (CSP) + Swagger UI
         response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; script-src 'self';"
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.jsdelivr.net unpkg.com; "
+            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net unpkg.com; "
+            "font-src 'self' cdn.jsdelivr.net;"
         )
-        response.headers["X-Content-Security-Policy"] = "default-src 'self';"
+        response.headers["X-Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.jsdelivr.net unpkg.com; "
+            "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net unpkg.com; "
+            "font-src 'self' cdn.jsdelivr.net;"
+        )
 
         # Referrer Policy
         response.headers["Referrer-Policy"] = "no-referrer"
