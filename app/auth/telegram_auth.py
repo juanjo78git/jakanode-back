@@ -20,7 +20,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
-from app.core.config import ALGORITHM, SECRET_KEY
+from app.core.settings import ALGORITHM, SECRET_KEY
 
 # Define the OAuth2 scheme with the token URL for Telegram authentication.
 # This tells FastAPI where to obtain the token.

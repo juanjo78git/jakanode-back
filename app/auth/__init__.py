@@ -2,6 +2,6 @@
 Authentication module.
 """
 
-from .fake_auth import fake_auth
+from .auth import combined_auth
 
-__all__ = ["fake_auth"]
+__all__ = ["combined_auth"]

@@ -50,7 +50,7 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 app.state.limiter = limiter  # Associate the limiter with the app
 
 # Include the Telegram authentication router
-app.include_router(telegram_auth_router, prefix="/api/v1/auth")
+app.include_router(telegram_auth_router, prefix="/api/v1", tags=["Authentication"])
 
 # Include all routers from the routes package
 for router_entry in routers:

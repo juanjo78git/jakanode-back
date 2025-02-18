@@ -9,7 +9,7 @@ import hashlib
 import hmac
 import time
 
-from app.core.config import TELEGRAM_BOT_TOKEN
+from app.core.settings import TELEGRAM_BOT_TOKEN
 
 
 def check_telegram_auth(data: dict) -> bool:
