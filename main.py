@@ -24,7 +24,8 @@ from fastapi import FastAPI
 from slowapi.errors import RateLimitExceeded
 
 from app.api.routes import routers
-from app.core.config import add_cors
+from app.auth.telegram import router as telegram_auth_router
+from app.core.cors import add_cors
 from app.core.rate_limit_exceptions import rate_limit_exceeded_handler
 from app.core.rate_limiting import limiter
 from app.core.security import SecurityHeadersMiddleware
@@ -47,6 +48,9 @@ add_cors(app)
 # Set up the rate limiting exception handler
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 app.state.limiter = limiter  # Associate the limiter with the app
+
+# Include the Telegram authentication router
+app.include_router(telegram_auth_router, prefix="/api/v1/auth")
 
 # Include all routers from the routes package
 for router_entry in routers:

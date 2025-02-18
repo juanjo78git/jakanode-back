@@ -1,55 +1,48 @@
 """
-Fake Authentication Middleware for FastAPI
+Telegram Authentication Module for FastAPI
 
-This module provides a simulated authentication mechanism for testing purposes.
-It verifies the presence and validity of an authorization token in the request headers.
-If authentication fails, an HTTP 401 Unauthorized error is returned.
+This module provides authentication functionality for the FastAPI application.
+It allows authentication using either:
+  - A simulated method (`fake_auth`) for testing purposes.
+  - A real JWT verification (`verify_telegram_token`) for users authenticated via Telegram.
 
-Authentication Process:
-- The client must include an `Authorization` header in the format: `Bearer secret_token`.
-- If the token is missing or incorrect, access is denied.
-- If valid, the function returns a mock user dictionary.
-
-Note: This is a placeholder authentication function and should be replaced
-with a real authentication mechanism in production (e.g., OAuth2, JWT).
+Functions:
+    - combined_auth: Determines whether to authenticate using `fake_auth` or `verify_telegram_token`.
 """
 
-from fastapi import Header, HTTPException, status
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+
+from app.auth.fake_auth import fake_auth  # Your existing fake_auth function
+from app.auth.telegram_auth import (
+    verify_telegram_token,
+)  # Your function that verifies the JWT
+
+# Define the OAuth2 scheme to extract the token from the Authorization header
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/telegram")
 
 
-def fake_auth(authorization: str = Header(None)):
+def combined_auth(token: str = Depends(oauth2_scheme)):
     """
-    Simulated authentication function.
+    Combined authentication dependency that verifies the token using either a simulated
+    method (fake_auth) or real JWT verification (verify_telegram_token).
 
-    This function extracts and validates an authentication token from
-    the HTTP request headers. It ensures that only authorized users
-    can access protected endpoints.
+    The function reuses the existing implementations:
+      - If the token is exactly "secret_token", it delegates to fake_auth.
+      - Otherwise, it uses verify_telegram_token to decode and validate the JWT.
 
-    Parameters:
-        authorization (str): The `Authorization` header containing the token.
-                             Expected format: `Bearer secret_token`.
+    Args:
+        token (str): The token extracted from the Authorization header.
 
     Returns:
-        dict: A dictionary containing mock user information.
+        dict: A dictionary containing the authenticated user's information.
 
     Raises:
-        HTTPException:
-            - 401 Unauthorized if the `Authorization` header is missing.
-            - 401 Unauthorized if the token is invalid.
+        HTTPException: If the token is missing or invalid.
     """
-    if not authorization:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing token",
-        )
-
-    # Extract token from the Authorization header (format: "Bearer secret_token")
-    token = authorization.split(" ")[1] if " " in authorization else authorization
-
-    if token != "secret_token":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unauthorized",
-        )
-
-    return {"user": "demo"}
+    # If the token is the simulated one, use fake_auth
+    if token == "secret_token":
+        # Call fake_auth, passing the token as the header value
+        return fake_auth(authorization=token)
+    # Otherwise, use real JWT verification
+    return verify_telegram_token(token)
