@@ -8,8 +8,10 @@ received from the Telegram login widget.
 import hashlib
 import hmac
 import time
+
 from app.core.logging import logger
 from app.core.settings import TELEGRAM_BOT_TOKEN
+
 
 def check_telegram_auth(data: dict) -> bool:
     """
@@ -29,11 +31,17 @@ def check_telegram_auth(data: dict) -> bool:
 
         # If the authentication data is older than 60 seconds, consider it expired.
         if current_time - auth_date > 60:
-            logger.error("Authentication data expired: current_time - auth_date = %s", current_time - auth_date)
+            logger.error(
+                "Authentication data expired: current_time - auth_date = %s",
+                current_time - auth_date,
+            )
             return False
 
-        # Retrieve the provided hash without modifying the original data.
+        # Retrieve the provided hash. If not present, log and return False.
         provided_hash = data.get("hash")
+        if provided_hash is None:
+            logger.error("No hash provided in authentication data.")
+            return False
 
         # Build the data string by sorting the parameters and excluding keys with None and 'hash'.
         data_str = "\n".join(
@@ -44,7 +52,9 @@ def check_telegram_auth(data: dict) -> bool:
         secret_key = hashlib.sha256(TELEGRAM_BOT_TOKEN.encode()).digest()
 
         # Calculate the hash using HMAC with SHA256.
-        calculated_hash = hmac.new(secret_key, data_str.encode(), hashlib.sha256).hexdigest()
+        calculated_hash = hmac.new(
+            secret_key, data_str.encode(), hashlib.sha256
+        ).hexdigest()
 
         logger.debug("Data string: %s", data_str)
         logger.debug("Provided hash: %s", provided_hash)
@@ -53,6 +63,7 @@ def check_telegram_auth(data: dict) -> bool:
         # Securely compare the provided hash with the calculated hash.
         return hmac.compare_digest(provided_hash, calculated_hash)
     except (ValueError, KeyError, TypeError) as e:
-        logger.error("Error during Telegram authentication verification: %s", e, exc_info=True)
+        logger.error(
+            "Error during Telegram authentication verification: %s", e, exc_info=True
+        )
         return False
-
