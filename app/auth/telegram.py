@@ -33,9 +33,9 @@ class TelegramAuthData:
     This class represents the required fields to authenticate a user via Telegram's login widget.
     """
 
-    telegram_id: str  # Unique identifier for the Telegram user
+    id: str  # Unique identifier for the Telegram user
     auth_date: str  # Timestamp of authentication
-    auth_hash: str  # Hash provided by Telegram for verification
+    hash: str  # Hash provided by Telegram for verification
     first_name: Optional[str] = None  # User's first name (optional)
     last_name: Optional[str] = None  # User's last name (optional)
     username: Optional[str] = None  # Telegram username (optional)
@@ -62,9 +62,9 @@ def authenticate_via_telegram(
     validates the data, and returns a JWT token if the authentication is successful.
 
     **Query Parameters:**
-    - **telegram_id (str)**: The unique Telegram user ID.
+    - **id (str)**: The unique Telegram user ID.
     - **auth_date (str)**: The timestamp when authentication occurred.
-    - **auth_hash (str)**: The authentication hash provided by Telegram.
+    - **hash (str)**: The authentication hash provided by Telegram.
     - **first_name (str, optional)**: The user's first name.
     - **last_name (str, optional)**: The user's last name.
     - **username (str, optional)**: The Telegram username.
@@ -87,7 +87,7 @@ def authenticate_via_telegram(
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": str(telegram_data.telegram_id)}, expires_delta=access_token_expires
+        data={"sub": str(telegram_data.id)}, expires_delta=access_token_expires
     )
 
     return TokenSchema(access_token=access_token, token_type="bearer")
