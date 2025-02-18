@@ -12,7 +12,13 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+# Auth
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Logging configuration
+DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+LOG_FILE = os.getenv("LOG_FILE", "logs/jakanode_back.log")
