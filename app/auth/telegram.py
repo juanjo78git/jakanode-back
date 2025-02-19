@@ -2,19 +2,20 @@
 Telegram Authentication Router
 
 This module defines the API endpoint for authenticating users via Telegram.
-It validates the authentication data received from Telegram and issues a JWT token.
+It receives the authentication data from the Telegram Login Widget, validates it,
+and if valid, issues a JWT token for the user.
 
-The authentication process follows these steps:
+Authentication flow:
 1. The frontend uses the Telegram Login Widget to obtain authentication data.
-2. The frontend sends this data to this API endpoint.
-3. The API verifies the data and generates a JWT token if valid.
-4. The client uses the JWT token for authenticated requests.
+2. The frontend sends this data to the `/auth/telegram` API endpoint.
+3. The backend validates the data, generates a JWT token if valid, and returns it.
+4. The frontend stores and uses the JWT token for subsequent authenticated API requests.
 """
 
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Optional
-
+from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.auth.schemas.auth import TokenSchema
@@ -27,68 +28,72 @@ router = APIRouter()
 
 
 @dataclass
-class TelegramAuthData:
+class TelegramAuthData(BaseModel):
     """
-    Stores Telegram authentication data.
-
-    This class represents the required fields to authenticate a user via Telegram's login widget.
+    Stores the authentication data received from Telegram's Login Widget.
+    
+    This class represents the necessary fields to authenticate a user using Telegram's
+    authentication system via the Telegram Login Widget.
     """
 
-    id: str  # Unique identifier for the Telegram user
-    auth_date: str  # Timestamp of authentication
-    hash: str  # Hash provided by Telegram for verification
+    id: int  # Telegram user ID (unique identifier for each user)
+    auth_date: int  # Timestamp of when the user authenticated (in Unix format)
+    hash: str  # Authentication hash provided by Telegram for verification
     first_name: Optional[str] = None  # User's first name (optional)
     last_name: Optional[str] = None  # User's last name (optional)
     username: Optional[str] = None  # Telegram username (optional)
-    photo_url: Optional[str] = None  # Profile photo URL (optional)
+    photo_url: Optional[str] = None  # URL to user's profile photo (optional)
 
 
-@router.get(
+@router.post(
     "/auth/telegram",
-    summary="Authenticate via Telegram",
+    summary="Authenticate user via Telegram",
     description=(
-        "Authenticates users using the Telegram Login Widget. "
-        "Receives authentication data, verifies it, and returns a JWT token."
+        "This endpoint receives authentication data from Telegram's Login Widget, "
+        "validates it using the bot token, and returns a JWT token if the data is valid."
     ),
-    response_model=TokenSchema,  # Defines the expected response structure
+    response_model=TokenSchema,  # Response schema to define the structure of the returned token
     tags=["Authentication"],
 )
 def authenticate_via_telegram(
-    telegram_data: TelegramAuthData = Depends(TelegramAuthData),
+    telegram_data: TelegramAuthData
 ):
     """
-    Authenticate users via the Telegram login widget.
+    Endpoint to authenticate users via Telegram login widget.
 
-    This endpoint receives authentication data from Telegram as query parameters,
-    validates the data, and returns a JWT token if the authentication is successful.
+    This API endpoint receives authentication data as parameters from Telegram,
+    verifies the authenticity of the data, and returns a JWT token if the data is valid.
 
-    **Query Parameters:**
-    - **id (str)**: The unique Telegram user ID.
-    - **auth_date (str)**: The timestamp when authentication occurred.
-    - **hash (str)**: The authentication hash provided by Telegram.
+    Query Parameters (all optional except `id`, `auth_date`, and `hash`):
+    - **id (int)**: Unique Telegram user ID.
+    - **auth_date (int)**: The timestamp (in Unix format) when authentication occurred.
+    - **hash (str)**: The hash provided by Telegram for data validation.
     - **first_name (str, optional)**: The user's first name.
     - **last_name (str, optional)**: The user's last name.
     - **username (str, optional)**: The Telegram username.
-    - **photo_url (str, optional)**: The URL to the user's profile photo.
+    - **photo_url (str, optional)**: URL to user's profile photo.
 
-    **Returns:**
-    - **access_token (str)**: The JWT token that should be used for subsequent authenticated requests.
-    - **token_type (str)**: The token type (usually "bearer").
+    Returns:
+    - **access_token (str)**: A JWT token that should be used for subsequent authenticated requests.
+    - **token_type (str)**: The type of the token (usually "bearer").
 
-    **Raises:**
-    - **400 Bad Request**: If the authentication data is invalid.
+    Raises:
+    - **400 Bad Request**: If the authentication data is invalid or expired.
     """
-    logger.debug(f"Received authentication request from Telegram: {telegram_data}")
+    logger.debug("Received authentication request from Telegram: %s", telegram_data)
 
+    # Extracting the authentication data to verify
     user_data = telegram_data.__dict__
 
+    # Verifying the Telegram authentication data
     if not check_telegram_auth(user_data):
         logger.warning(f"Authentication failed for user ID: {telegram_data.id}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid authentication data",
+            detail="Invalid authentication data",  # Inform the client that data is invalid
         )
 
+    # If authentication is successful, proceed with JWT token creation
     logger.info(f"User {telegram_data.id} authenticated successfully")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -96,4 +101,5 @@ def authenticate_via_telegram(
     )
 
     logger.debug(f"Generated access token for user {telegram_data.id}")
-    return TokenSchema(access_token=access_token, token_type="bearer")
+    return TokenSchema(access_token=access_token, token_type="bearer")  # Returning the JWT token
+
