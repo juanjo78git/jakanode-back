@@ -17,6 +17,7 @@ from app.auth.fake_auth import fake_auth  # Your existing fake_auth function
 from app.auth.telegram_auth import (
     verify_telegram_token,
 )  # Your function that verifies the JWT
+from app.core.logging import logger
 
 # Define the OAuth2 scheme to extract the token from the Authorization header
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/telegram")
@@ -40,9 +41,14 @@ def combined_auth(token: str = Depends(oauth2_scheme)):
     Raises:
         HTTPException: If the token is missing or invalid.
     """
+    logger.debug("Attempting authentication with provided token.")
+
     # If the token is the simulated one, use fake_auth
     if token == "secret_token":
         # Call fake_auth, passing the token as the header value
+        logger.info("Using fake authentication method.")
         return fake_auth(authorization=token)
+
     # Otherwise, use real JWT verification
+    logger.info("Using real JWT authentication method.")
     return verify_telegram_token(token)

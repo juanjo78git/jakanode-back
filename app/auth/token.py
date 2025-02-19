@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 
 from jose import jwt  # Using python-jose for JWT handling
 
+from app.core.logging import logger
 from app.core.settings import ALGORITHM, SECRET_KEY
 
 
@@ -22,9 +23,21 @@ def create_access_token(data: dict, expires_delta: timedelta) -> str:
 
     Returns:
         str: The encoded JWT token.
+
+    Raises:
+        Exception: Error generating JWT token
     """
-    to_encode = data.copy()
-    expire = datetime.utcnow() + expires_delta
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    try:
+        to_encode = data.copy()
+        expire = datetime.utcnow() + expires_delta
+        to_encode.update({"exp": expire})
+
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+        logger.debug(
+            f"JWT token created successfully for user: {data.get('sub')}, expires at {expire}"
+        )
+        return encoded_jwt
+    except Exception as e:
+        logger.error(f"Error generating JWT token: {e}")
+        raise

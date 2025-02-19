@@ -19,6 +19,8 @@ CORS Configuration:
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.logging import logger
+
 # List of allowed origins for CORS
 origins = [
     "https://jakanode.freeddns.org",  # Production API access
@@ -41,6 +43,7 @@ def add_cors(app):
     Raises:
         Exception: If the middleware cannot be added due to an internal error.
     """
+    logger.debug("Configure Cross-Origin Resource Sharing (CORS) settings.")
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,  # List of allowed origins

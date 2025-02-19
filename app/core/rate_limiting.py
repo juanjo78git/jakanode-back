@@ -15,5 +15,7 @@ Usage:
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-# Create a Limiter instance using the client's IP address as the key.
+from app.core.logging import logger
+
+logger.debug("Create a Limiter instance using the client's IP address as the key.")
 limiter = Limiter(key_func=get_remote_address)

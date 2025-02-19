@@ -18,6 +18,8 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
+from app.core.logging import logger
+
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """
@@ -45,6 +47,8 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         Raises:
             Exception: Propagates any exception raised during the processing of the request.
         """
+        logger.debug("Process and adds security-related HTTP headers to all responses ")
+
         # Process the incoming request and obtain the response
         response: Response = await call_next(request)
 

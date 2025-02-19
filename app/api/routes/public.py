@@ -13,6 +13,7 @@ These routes can be accessed freely by any client.
 
 from fastapi import APIRouter, Request
 
+from app.core.logging import logger
 from app.core.rate_limiting import limiter
 
 router = APIRouter()
@@ -35,6 +36,7 @@ async def home(request: Request):
     Returns:
         dict: A JSON object containing a public message.
     """
+    logger.debug("/ endpoint accessed successfully (public).")
     return {"message": "public route ok"}
 
 
@@ -51,4 +53,5 @@ async def info(request: Request):
     Returns:
         dict: A JSON object containing public information.
     """
+    logger.debug("/info endpoint accessed successfully (public).")
     return {"message": "Public info"}

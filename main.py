@@ -26,6 +26,7 @@ from slowapi.errors import RateLimitExceeded
 from app.api.routes import routers
 from app.auth.telegram import router as telegram_auth_router
 from app.core.cors import add_cors
+from app.core.logging import logger
 from app.core.rate_limit_exceptions import rate_limit_exceeded_handler
 from app.core.rate_limiting import limiter
 from app.core.security import SecurityHeadersMiddleware
@@ -39,21 +40,29 @@ app = FastAPI(
     redoc_url="/api/v1/redoc",
 )
 
-# Add Security Middleware to include HTTP security headers in every response.
+logger.debug(
+    "Add Security Middleware to include HTTP security headers in every response."
+)
 app.add_middleware(SecurityHeadersMiddleware)
 
-# Configure Cross-Origin Resource Sharing (CORS) settings.
+logger.debug("Adds CORS middleware to the FastAPI application.")
 add_cors(app)
 
-# Set up the rate limiting exception handler
+logger.debug("Set up the rate limiting.")
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 app.state.limiter = limiter  # Associate the limiter with the app
 
-# Include the Telegram authentication router
+logger.debug("Include the Telegram authentication router.")
 app.include_router(telegram_auth_router, prefix="/api/v1", tags=["Authentication"])
 
-# Include all routers from the routes package
+logger.debug("Include all routers from the routes package:")
 for router_entry in routers:
+    logger.debug(
+        "Router: %s Prefix: %s Tags: %s",
+        router_entry["router"],
+        router_entry["prefix"],
+        router_entry["tags"],
+    )
     app.include_router(
         router_entry["router"], prefix=router_entry["prefix"], tags=router_entry["tags"]
     )
@@ -61,4 +70,5 @@ for router_entry in routers:
 if __name__ == "__main__":
     import uvicorn
 
+    logger.debug("Run uvicorn...")
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

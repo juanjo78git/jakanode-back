@@ -16,6 +16,8 @@ with a real authentication mechanism in production (e.g., OAuth2, JWT).
 
 from fastapi import Header, HTTPException, status
 
+from app.core.logging import logger
+
 
 def fake_auth(authorization: str = Header(None)):
     """
@@ -38,6 +40,7 @@ def fake_auth(authorization: str = Header(None)):
             - 401 Unauthorized if the token is invalid.
     """
     if not authorization:
+        logger.warning("Authentication failed: Missing token")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing token",
@@ -47,9 +50,11 @@ def fake_auth(authorization: str = Header(None)):
     token = authorization.split(" ")[1] if " " in authorization else authorization
 
     if token != "secret_token":
+        logger.warning(f"Authentication failed: Invalid token '{token}'")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Unauthorized",
         )
 
+    logger.info("Authentication successful for user 'demo'")
     return {"user": "demo"}

@@ -20,6 +20,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.auth.schemas.auth import TokenSchema
 from app.auth.token import create_access_token
 from app.auth.validator import check_telegram_auth
+from app.core.logging import logger
 from app.core.settings import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
@@ -77,17 +78,22 @@ def authenticate_via_telegram(
     **Raises:**
     - **400 Bad Request**: If the authentication data is invalid.
     """
+    logger.debug(f"Received authentication request from Telegram: {telegram_data}")
+
     user_data = telegram_data.__dict__
 
     if not check_telegram_auth(user_data):
+        logger.warning(f"Authentication failed for user ID: {telegram_data.id}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid authentication data",
         )
 
+    logger.info(f"User {telegram_data.id} authenticated successfully")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": str(telegram_data.id)}, expires_delta=access_token_expires
     )
 
+    logger.debug(f"Generated access token for user {telegram_data.id}")
     return TokenSchema(access_token=access_token, token_type="bearer")

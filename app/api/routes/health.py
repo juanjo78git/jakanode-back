@@ -13,6 +13,8 @@ and ensuring system availability.
 
 from fastapi import APIRouter
 
+from app.core.logging import logger
+
 router = APIRouter()
 
 
@@ -24,4 +26,5 @@ async def health_check():
     Returns:
         dict: A JSON object with a status message.
     """
+    logger.debug("/health endpoint accessed successfully.")
     return {"status": "ok"}

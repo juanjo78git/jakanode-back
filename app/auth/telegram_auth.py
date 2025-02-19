@@ -20,6 +20,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
+from app.core.logging import logger
 from app.core.settings import ALGORITHM, SECRET_KEY
 
 # Define the OAuth2 scheme with the token URL for Telegram authentication.
@@ -41,14 +42,19 @@ def verify_telegram_token(token: str = Depends(oauth2_scheme)):
         HTTPException: If the token is invalid or expired.
     """
     try:
+        logger.debug(f"Verifying Telegram token: {token}")
+
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
         if user_id is None:
+            logger.warning("Token verification failed: Missing 'sub' field")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
             )
+        logger.debug(f"Token verified successfully for user: {user_id}")
+        return {"user": user_id}
     except JWTError as exc:
+        logger.error(f"Token verification error: {exc}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
         ) from exc
-    return {"user": user_id}

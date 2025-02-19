@@ -15,6 +15,8 @@ from fastapi import Request, Response
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
+from app.core.logging import logger
+
 
 async def rate_limit_exceeded_handler(request: Request, exc: Exception) -> Response:
     """
@@ -29,5 +31,5 @@ async def rate_limit_exceeded_handler(request: Request, exc: Exception) -> Respo
     """
     if isinstance(exc, RateLimitExceeded):  # ✅ Verifica si es un RateLimitExceeded
         return _rate_limit_exceeded_handler(request, exc)
-
+    logger.debug("Rate limit exceeded error (429).")
     raise exc

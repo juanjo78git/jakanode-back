@@ -14,6 +14,7 @@ Endpoints:
 from fastapi import APIRouter, Depends
 
 from app.auth.auth import combined_auth
+from app.core.logging import logger
 
 router = APIRouter()
 
@@ -36,6 +37,7 @@ async def dashboard(user: dict = Depends(combined_auth)):
     Raises:
         HTTPException: 401 Unauthorized if the Authorization token is missing or invalid.
     """
+    logger.debug("/dashboard endpoint accessed successfully (user: %s).", user["user"])
     return {"message": f"Hello, {user['user']}"}
 
 
@@ -55,4 +57,5 @@ async def admin(user: dict = Depends(combined_auth)):
     Raises:
         HTTPException: 401 Unauthorized if the Authorization token is missing or invalid.
     """
+    logger.debug("/admin endpoint accessed successfully (user: %s).", user["user"])
     return {"message": f"Admin panel for {user['user']}"}
