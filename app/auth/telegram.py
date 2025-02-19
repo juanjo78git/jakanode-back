@@ -15,8 +15,9 @@ Authentication flow:
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Optional
+
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
-from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.auth.schemas.auth import TokenSchema
 from app.auth.token import create_access_token
@@ -31,7 +32,7 @@ router = APIRouter()
 class TelegramAuthData(BaseModel):
     """
     Stores the authentication data received from Telegram's Login Widget.
-    
+
     This class represents the necessary fields to authenticate a user using Telegram's
     authentication system via the Telegram Login Widget.
     """
@@ -55,9 +56,7 @@ class TelegramAuthData(BaseModel):
     response_model=TokenSchema,  # Response schema to define the structure of the returned token
     tags=["Authentication"],
 )
-def authenticate_via_telegram(
-    telegram_data: TelegramAuthData
-):
+def authenticate_via_telegram(telegram_data: TelegramAuthData):
     """
     Endpoint to authenticate users via Telegram login widget.
 
@@ -101,5 +100,6 @@ def authenticate_via_telegram(
     )
 
     logger.debug(f"Generated access token for user {telegram_data.id}")
-    return TokenSchema(access_token=access_token, token_type="bearer")  # Returning the JWT token
-
+    return TokenSchema(
+        access_token=access_token, token_type="bearer"
+    )  # Returning the JWT token

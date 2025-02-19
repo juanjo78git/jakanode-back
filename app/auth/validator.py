@@ -67,7 +67,9 @@ def check_telegram_auth(data: dict) -> bool:
         ).hexdigest()
 
         logger.debug("Data string used for hash calculation: %s", data_str)
-        logger.debug("Generated secret key (SHA-256 of bot token): %s", secret_key.hex())
+        logger.debug(
+            "Generated secret key (SHA-256 of bot token): %s", secret_key.hex()
+        )
         logger.debug("Provided hash: %s", provided_hash)
         logger.debug("Calculated hash: %s", calculated_hash)
 
