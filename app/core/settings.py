@@ -22,3 +22,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_FILE = os.getenv("LOG_FILE", "logs/jakanode_back.log")
+
+# Database configuration
+DB_NAME = os.getenv("DB_NAME", "db.sqlite3")
+DB_PATH = os.getenv("DB_PATH", "./")
