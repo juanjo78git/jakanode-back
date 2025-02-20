@@ -108,10 +108,43 @@ LOG_FILE=logs/jakanode_back.log
 
 For further assistance, refer to the project's documentation or contact the maintainer. 🚀
 
+
 ## Database Migrations
 
-To manage database schema changes you can use *jakanode-bot* project.
+To manage database schema changes and ensure your database is up-to-date with the latest structure,
+*jakanode-bot* includes a migration system. This system allows you to automatically apply any pending migrations,
+including creating new tables or altering existing ones.
 
+### Creating SQLite3 Database
+
+To create the SQLite3 database, run the following command from the root directory of the project. 
+If the database doesn't exist, it will be automatically created:
+
+```bash
+sqlite3 db.sqlite3
+```
+Make sure that the database-related variables in the `.env` file are correctly configured. 
+These variables define the database connection settings that *jakanode-bot* will use.
+
+### Running Database Migrations
+
+To execute all pending database migrations and apply any necessary changes to your database, 
+run the following command from the root directory of your project:
+
+```bash
+python -m database.migrate
+```
+And verify that the changes have been applied successfully by checking the database:
+
+```bash
+sqlite3 db.sqlite3
+```
+```sql
+.headers on
+.mode column
+SELECT * FROM migrations;
+.tables
+```
 
 ## Run
 
