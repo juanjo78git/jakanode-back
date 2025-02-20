@@ -2,6 +2,7 @@
 User Roles Model
 """
 
+
 def format_user_role_data(user_role_data):
     """
     Formats user role data.

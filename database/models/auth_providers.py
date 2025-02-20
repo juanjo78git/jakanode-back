@@ -2,6 +2,7 @@
 Auth Providers Model
 """
 
+
 def format_auth_provider_data(provider_data):
     """
     Formats authentication provider data.

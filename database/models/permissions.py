@@ -2,6 +2,7 @@
 Permissions Model
 """
 
+
 def format_permission_data(permission_data):
     """
     Formats permission data.

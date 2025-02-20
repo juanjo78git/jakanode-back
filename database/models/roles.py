@@ -2,6 +2,7 @@
 Roles Model
 """
 
+
 def format_role_data(role_data):
     """
     Formats role data.

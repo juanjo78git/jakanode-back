@@ -2,6 +2,7 @@
 Role Permissions Model
 """
 
+
 def format_role_permission_data(role_permission_data):
     """
     Formats role permission data.

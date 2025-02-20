@@ -2,6 +2,7 @@
 User Model
 """
 
+
 def format_user_data(user_data):
     """
     Formats the user data.

@@ -2,6 +2,7 @@
 Audit Logs Model
 """
 
+
 def format_audit_log_data(audit_log_data):
     """
     Formats audit log data.

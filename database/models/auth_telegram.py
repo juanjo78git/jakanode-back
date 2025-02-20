@@ -2,6 +2,7 @@
 Telegram Authentication Model
 """
 
+
 def format_telegram_data(telegram_data):
     """
     Formats Telegram authentication data.

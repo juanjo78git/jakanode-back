@@ -2,9 +2,10 @@
 User with Roles and Permissions Model
 """
 
-from database.models.users import format_user_data
-from database.models.roles import format_role_data
 from database.models.permissions import format_permission_data
+from database.models.roles import format_role_data
+from database.models.users import format_user_data
+
 
 def format_user_with_roles_permissions(user_data, roles_data, permissions_data):
     """
@@ -21,7 +22,13 @@ def format_user_with_roles_permissions(user_data, roles_data, permissions_data):
     if user_data:
         return {
             "user": format_user_data(user_data),
-            "roles": [format_role_data(role) for role in roles_data] if roles_data else [],
-            "permissions": [format_permission_data(permission) for permission in permissions_data] if permissions_data else []
+            "roles": (
+                [format_role_data(role) for role in roles_data] if roles_data else []
+            ),
+            "permissions": (
+                [format_permission_data(permission) for permission in permissions_data]
+                if permissions_data
+                else []
+            ),
         }
     return None

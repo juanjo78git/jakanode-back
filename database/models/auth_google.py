@@ -2,6 +2,7 @@
 Google Authentication Model
 """
 
+
 def format_google_data(google_data):
     """
     Formats Google authentication data.
