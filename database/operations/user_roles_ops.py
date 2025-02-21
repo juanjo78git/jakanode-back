@@ -1,3 +1,4 @@
+# pylint: disable=R0801
 """
 User Role Operations
 """

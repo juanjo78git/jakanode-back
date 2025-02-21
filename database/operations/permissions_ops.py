@@ -1,14 +1,15 @@
+# pylint: disable=R0801
 """
 Permission Operations
 """
-
-from .role_permissions_ops import delete_role_permissions_by_permission
 
 from database.db_config import (
     close_db_connection,
     commit_db_connection,
     get_db_connection,
 )
+
+from .role_permissions_ops import delete_role_permissions_by_permission
 
 
 def create_permission(name, description=None):

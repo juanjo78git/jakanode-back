@@ -1,3 +1,4 @@
+# pylint: disable=R0801
 """
 Telegram Authentication Operations
 """
@@ -10,7 +11,7 @@ from database.db_config import (
 
 
 def create_auth_telegram(
-    user_id, telegram_id, first_name, last_name=None, username=None, photo_url=None
+    user_id, telegram_id, first_name, *, last_name=None, username=None, photo_url=None
 ):
     """
     Creates a Telegram authentication record for a user.

@@ -1,3 +1,4 @@
+# pylint: disable=R0801
 """
 User with Roles and Permissions Model
 """
